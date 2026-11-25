@@ -2,7 +2,9 @@
 
 A small, always-on-top lyrics widget for Windows. CornerLyrics reads the song currently playing through the Windows Media Session, finds matching lyrics on LRCLIB, and keeps the current line in sync with playback—without switching away from your work.
 
-![CornerLyrics showing synchronized lyrics for “Apocalypse” by Cigarettes After Sex](docs/assets/preview.png)
+![CornerLyrics 1.0.3 running as a small always-on-top overlay on Windows 11, showing synchronized lyrics for “Apocalypse” by Cigarettes After Sex](docs/assets/desktop-preview.png)
+
+*Desktop background: [Microsoft Windows Insider Blog](https://blogs.windows.com/windows-insider/2026/05/15/improving-windows-quality-making-taskbar-and-start-more-personal/).*
 
 ## Features
 
