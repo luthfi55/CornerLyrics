@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'"
+    />
+    <title>CornerLyrics</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="lyrics-card" aria-label="CornerLyrics">
+      <header class="track-header">
+        <div class="track-info">
+          <div class="source-line">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="source-name">Connecting to Windows media…</span>
+          </div>
+          <div id="track-title" class="track-title">No song playing</div>
+          <div id="track-artist" class="track-artist"></div>
+        </div>
+
+        <div class="window-actions">
+          <button id="refresh-button" class="icon-button" type="button" aria-label="Refresh lyrics" title="Refresh lyrics">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 6v5h-5M4 18v-5h5" />
+              <path d="M6.1 9a7 7 0 0 1 11.5-2.6L20 9M4 15l2.4 2.6A7 7 0 0 0 17.9 15" />
+            </svg>
+          </button>
+          <button id="minimize-button" class="icon-button" type="button" aria-label="Minimize" title="Minimize">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+          </button>
+          <button id="close-button" class="icon-button close-button" type="button" aria-label="Close" title="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <section id="synced-view" class="synced-view" aria-live="polite" aria-atomic="true">
+        <div id="previous-line" class="lyric-line secondary-line"></div>
+        <div id="current-line" class="lyric-line current-line">Play a song in a music app…</div>
+        <div id="next-line" class="lyric-line secondary-line"></div>
+      </section>
+
+      <section id="plain-view" class="plain-view" hidden aria-live="polite"></section>
+
+      <footer class="lyrics-footer">
+        <span id="lyrics-status">Starting app</span>
+        <span id="position-status" class="position-status">CornerLyrics</span>
+      </footer>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

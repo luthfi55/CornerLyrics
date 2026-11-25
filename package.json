@@ -1,0 +1,26 @@
+{
+  "name": "corner-lyrics",
+  "version": "1.0.2",
+  "description": "A tiny always-on-top lyrics widget for Windows.",
+  "main": "src/main.cjs",
+  "author": "CornerLyrics",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "build": "electron-builder --win nsis",
+    "build:portable": "electron-builder --win portable",
+    "build:dir": "electron-builder --win --dir"
+  },
+  "devDependencies": {
+    "electron": "45.5.0",
+    "electron-builder": "^26.18.0"
+  },
+  "overrides": {
+    "@electron/universal": "3.0.6",
+    "app-builder-lib": {
+      "minimatch": "^11.0.1"
+    }
+  }
+}

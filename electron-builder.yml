@@ -1,0 +1,32 @@
+appId: id.pojoklirik.desktop
+productName: CornerLyrics
+copyright: Copyright © 2026 CornerLyrics
+directories:
+  output: dist
+files:
+  - src/**/*
+  - scripts/windows-media.ps1
+  - assets/icon.ico
+  - package.json
+asar: true
+asarUnpack:
+  - scripts/windows-media.ps1
+win:
+  icon: assets/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  artifactName: ${productName} Setup ${version}.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: CornerLyrics
+  installerIcon: assets/icon.ico
+  uninstallerIcon: assets/icon.ico
+portable:
+  artifactName: ${productName} ${version} Portable.${ext}
+  requestExecutionLevel: user
+  unpackDirName: cornerlyrics-portable
