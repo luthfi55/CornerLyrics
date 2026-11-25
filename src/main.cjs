@@ -7,6 +7,7 @@ const { spawn } = require('node:child_process');
 const readline = require('node:readline');
 const { fetchLyrics } = require('./lib/lyrics.cjs');
 const { parseLrc } = require('./lib/lrc.cjs');
+const { DEFAULT_THEME, normalizeTheme, loadTheme, saveTheme } = require('./lib/themes.cjs');
 
 const APP_NAME = 'CornerLyrics';
 app.setName(APP_NAME);
@@ -16,6 +17,7 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
 
 const isWindows = process.platform === 'win32';
 const WINDOW_STATE_FILE = () => path.join(app.getPath('userData'), 'window-state.json');
+const SETTINGS_FILE = () => path.join(app.getPath('userData'), 'settings.json');
 const MIN_WINDOW_WIDTH = 320;
 const MIN_WINDOW_HEIGHT = 140;
 
@@ -34,6 +36,7 @@ let quitting = false;
 let latestMedia = emptyMedia();
 let latestLyrics = idleLyrics();
 let systemState = { status: 'starting', message: '' };
+let selectedTheme = DEFAULT_THEME;
 let currentMediaKey = '';
 let lyricsRequestId = 0;
 let activeLyricsController = null;
@@ -185,7 +188,9 @@ async function createWindow() {
   });
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-  await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
+  await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'), {
+    query: { theme: selectedTheme },
+  });
   mainWindow.showInactive();
   send('media:update', latestMedia);
   send('lyrics:update', latestLyrics);
@@ -357,7 +362,14 @@ function registerIpc() {
     media: latestMedia,
     lyrics: latestLyrics,
     system: systemState,
+    theme: selectedTheme,
   }));
+
+  ipcMain.handle('theme:set', (_event, value) => {
+    selectedTheme = normalizeTheme(value);
+    saveTheme(SETTINGS_FILE(), selectedTheme);
+    return selectedTheme;
+  });
 
   ipcMain.on('lyrics:refresh', () => loadLyrics({ force: true }));
   ipcMain.on('window:minimize', () => mainWindow?.minimize());
@@ -378,6 +390,7 @@ if (!gotSingleInstanceLock) {
     if (isWindows) app.setAppUserModelId('id.pojoklirik.desktop');
     registerIpc();
     await migrateLegacyWindowState();
+    selectedTheme = loadTheme(SETTINGS_FILE());
     await createWindow();
     startMediaMonitor();
   });

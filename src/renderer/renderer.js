@@ -13,10 +13,63 @@ const elements = {
   plainView: document.getElementById('plain-view'),
   lyricsStatus: document.getElementById('lyrics-status'),
   positionStatus: document.getElementById('position-status'),
+  themeButton: document.getElementById('theme-button'),
+  themePicker: document.getElementById('theme-picker'),
+  themeAnnouncement: document.getElementById('theme-announcement'),
   refreshButton: document.getElementById('refresh-button'),
   minimizeButton: document.getElementById('minimize-button'),
   closeButton: document.getElementById('close-button'),
 };
+
+const THEME_NAMES = Object.freeze({
+  dark: 'Dark',
+  light: 'Light',
+  ocean: 'Ocean',
+  sunset: 'Sunset',
+});
+const themeButtons = [...document.querySelectorAll('[data-theme-choice]')];
+let activeTheme = 'dark';
+
+function applyTheme(theme) {
+  activeTheme = Object.hasOwn(THEME_NAMES, theme) ? theme : 'dark';
+  document.documentElement.dataset.theme = activeTheme;
+  for (const button of themeButtons) {
+    button.setAttribute('aria-pressed', String(button.dataset.themeChoice === activeTheme));
+  }
+}
+
+function closeThemePicker({ restoreFocus = false } = {}) {
+  elements.themePicker.hidden = true;
+  elements.themeButton.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) elements.themeButton.focus({ preventScroll: true });
+}
+
+function toggleThemePicker() {
+  const opening = elements.themePicker.hidden;
+  elements.themePicker.hidden = !opening;
+  elements.themeButton.setAttribute('aria-expanded', String(opening));
+  if (opening) {
+    themeButtons.find((button) => button.dataset.themeChoice === activeTheme)?.focus({ preventScroll: true });
+  } else {
+    elements.themeButton.focus({ preventScroll: true });
+  }
+}
+
+async function chooseTheme(theme) {
+  if (!Object.hasOwn(THEME_NAMES, theme)) return;
+  applyTheme(theme);
+  closeThemePicker({ restoreFocus: true });
+  setText(elements.themeAnnouncement, `${THEME_NAMES[theme]} theme applied`);
+
+  try {
+    await api.setTheme(theme);
+  } catch {
+    setText(elements.themeAnnouncement, `${THEME_NAMES[theme]} theme applied, but could not be saved`);
+  }
+}
+
+const requestedTheme = new URLSearchParams(window.location.search).get('theme');
+applyTheme(Object.hasOwn(THEME_NAMES, requestedTheme || '') ? requestedTheme : 'dark');
 
 const state = {
   media: {
@@ -50,12 +103,12 @@ function sourceLabel(source) {
     'firefox.exe': 'Firefox',
     'vlc.exe': 'VLC',
     'foobar2000.exe': 'foobar2000',
-    'music.ui.exe': 'Aplikasi Musik',
-    'microsoft.media.player': 'Aplikasi Media',
+    'music.ui.exe': 'Music app',
+    'microsoft.media.player': 'Media player',
   };
   const key = String(source || '').toLowerCase();
   if (names[key]) return names[key];
-  if (!key) return 'Media Windows';
+  if (!key) return 'Windows Media';
   return key.split(/[._]/).filter(Boolean).pop() || key;
 }
 
@@ -224,6 +277,24 @@ api.onSystemUpdate((system) => {
   renderLyrics();
 });
 
+elements.themeButton.addEventListener('click', toggleThemePicker);
+for (const button of themeButtons) {
+  button.addEventListener('click', () => chooseTheme(button.dataset.themeChoice));
+}
+
+document.addEventListener('pointerdown', (event) => {
+  if (!elements.themePicker.hidden && !elements.themePicker.contains(event.target) && !elements.themeButton.contains(event.target)) {
+    closeThemePicker();
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !elements.themePicker.hidden) {
+    event.preventDefault();
+    closeThemePicker({ restoreFocus: true });
+  }
+});
+
 elements.refreshButton.addEventListener('click', () => {
   api.refreshLyrics();
   elements.refreshButton.classList.add('refreshing');
@@ -237,6 +308,7 @@ api.getSnapshot().then((snapshot) => {
   state.media = snapshot.media;
   state.lyrics = snapshot.lyrics;
   state.system = snapshot.system;
+  applyTheme(Object.hasOwn(THEME_NAMES, snapshot.theme || '') ? snapshot.theme : activeTheme);
   renderMedia();
   renderSystem();
   renderLyrics();

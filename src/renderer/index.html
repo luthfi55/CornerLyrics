@@ -23,6 +23,21 @@
         </div>
 
         <div class="window-actions">
+          <button
+            id="theme-button"
+            class="icon-button"
+            type="button"
+            aria-label="Choose theme"
+            title="Choose theme"
+            aria-controls="theme-picker"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+              <circle cx="15" cy="7" r="2" />
+              <circle cx="9" cy="17" r="2" />
+            </svg>
+          </button>
           <button id="refresh-button" class="icon-button" type="button" aria-label="Refresh lyrics" title="Refresh lyrics">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M20 6v5h-5M4 18v-5h5" />
@@ -38,6 +53,25 @@
         </div>
       </header>
 
+      <div id="theme-picker" class="theme-picker" role="group" aria-label="Overlay theme" hidden>
+        <button class="theme-option" type="button" data-theme-choice="dark" aria-pressed="true" title="Use Dark theme">
+          <span class="theme-swatch swatch-dark" aria-hidden="true"></span>
+          <span>Dark</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-choice="light" aria-pressed="false" title="Use Light theme">
+          <span class="theme-swatch swatch-light" aria-hidden="true"></span>
+          <span>Light</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-choice="ocean" aria-pressed="false" title="Use Ocean theme">
+          <span class="theme-swatch swatch-ocean" aria-hidden="true"></span>
+          <span>Ocean</span>
+        </button>
+        <button class="theme-option" type="button" data-theme-choice="sunset" aria-pressed="false" title="Use Sunset theme">
+          <span class="theme-swatch swatch-sunset" aria-hidden="true"></span>
+          <span>Sunset</span>
+        </button>
+      </div>
+
       <section id="synced-view" class="synced-view" aria-live="polite" aria-atomic="true">
         <div id="previous-line" class="lyric-line secondary-line"></div>
         <div id="current-line" class="lyric-line current-line">Play a song in a music app…</div>
@@ -50,6 +84,8 @@
         <span id="lyrics-status">Starting app</span>
         <span id="position-status" class="position-status">CornerLyrics</span>
       </footer>
+
+      <span id="theme-announcement" class="sr-only" role="status" aria-live="polite"></span>
     </main>
 
     <script src="renderer.js"></script>

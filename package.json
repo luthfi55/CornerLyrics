@@ -1,6 +1,6 @@
 {
   "name": "corner-lyrics",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A tiny always-on-top lyrics widget for Windows.",
   "main": "src/main.cjs",
   "author": "CornerLyrics",
@@ -14,7 +14,7 @@
     "build:dir": "electron-builder --win --dir"
   },
   "devDependencies": {
-    "electron": "45.5.0",
+    "electron": "^45.5.0",
     "electron-builder": "^26.18.0"
   },
   "overrides": {
