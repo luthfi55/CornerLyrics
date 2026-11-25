@@ -22,8 +22,8 @@ Download **CornerLyrics 1.0.2** from the [GitHub Releases page](https://github.c
 
 | Build | Download | Notes |
 | --- | --- | --- |
-| Portable | [CornerLyrics 1.0.2 Portable.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.2/CornerLyrics%201.0.2%20Portable.exe) | About 105 MB. No installation required; settings are stored beside the executable. |
-| Installer | [CornerLyrics Setup 1.0.2.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.2/CornerLyrics%20Setup%201.0.2.exe) | Installs CornerLyrics and creates desktop and Start menu shortcuts. |
+| Portable | [CornerLyrics.1.0.2.Portable.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.2/CornerLyrics.1.0.2.Portable.exe) | About 105 MB. No installation required; settings are stored beside the executable. |
+| Installer | [CornerLyrics.Setup.1.0.2.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.2/CornerLyrics.Setup.1.0.2.exe) | Installs CornerLyrics and creates desktop and Start menu shortcuts. |
 | Checksums | [SHA256SUMS.txt](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.2/SHA256SUMS.txt) | SHA-256 hashes for both executables. |
 
 The executables are distributed through GitHub Releases rather than committed to Git. These builds are not code-signed, so Windows SmartScreen may show a warning on first launch. Verify the checksums if you want to confirm that a download matches the published file.
@@ -31,7 +31,7 @@ The executables are distributed through GitHub Releases rather than committed to
 To verify the portable download in PowerShell:
 
 ```powershell
-Get-FileHash ".\CornerLyrics 1.0.2 Portable.exe" -Algorithm SHA256
+Get-FileHash ".\CornerLyrics.1.0.2.Portable.exe" -Algorithm SHA256
 ```
 
 Compare the result with the corresponding line in `SHA256SUMS.txt`.
