@@ -23,6 +23,12 @@
         </div>
 
         <div class="window-actions">
+          <button id="hide-header-button" class="icon-button" type="button" aria-label="Hide header" title="Hide header">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+              <path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5 9 5a18 18 0 0 1-3 3.6M6.2 6.2A18.7 18.7 0 0 0 3 9s3.5 5 9 5a10 10 0 0 0 4.1-.9" />
+            </svg>
+          </button>
           <button
             id="theme-button"
             class="icon-button"
@@ -72,13 +78,22 @@
         </button>
       </div>
 
-      <section id="synced-view" class="synced-view" aria-live="polite" aria-atomic="true">
-        <div id="previous-line" class="lyric-line secondary-line"></div>
-        <div id="current-line" class="lyric-line current-line">Play a song in a music app…</div>
-        <div id="next-line" class="lyric-line secondary-line"></div>
-      </section>
+      <div class="lyrics-body">
+        <section id="synced-view" class="synced-view" aria-live="polite" aria-atomic="true">
+          <div id="previous-line" class="lyric-line secondary-line"></div>
+          <div id="current-line" class="lyric-line current-line">Play a song in a music app…</div>
+          <div id="next-line" class="lyric-line secondary-line"></div>
+        </section>
 
-      <section id="plain-view" class="plain-view" hidden aria-live="polite"></section>
+        <section id="plain-view" class="plain-view" hidden aria-live="polite"></section>
+
+        <button id="show-header-button" class="icon-button header-restore" type="button" aria-label="Show header" title="Show header" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M2.5 12s3.5-5 9.5-5 9.5 5 9.5 5-3.5 5-9.5 5-9.5-5-9.5-5Z" />
+            <circle cx="12" cy="12" r="2.5" />
+          </svg>
+        </button>
+      </div>
 
       <footer class="lyrics-footer">
         <span id="lyrics-status">Starting app</span>

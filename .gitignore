@@ -4,3 +4,5 @@ release/
 coverage/
 *.log
 .DS_Store
+/CornerLyrics *.exe
+/CornerLyrics Data/

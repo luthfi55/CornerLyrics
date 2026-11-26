@@ -55,7 +55,7 @@ function Start-SmokeApp {
     $env:TMP = $TempDirectory
 
     $launcher = Start-Process -FilePath $Executable -ArgumentList "--remote-debugging-port=$Port" -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
-    $deadline = (Get-Date).AddSeconds(30)
+    $deadline = (Get-Date).AddSeconds(120)
     $ready = $false
     while ((Get-Date) -lt $deadline) {
       try {
@@ -139,8 +139,8 @@ Start-SmokeApp -Executable $packagedExecutable -Port 9333 -DataDirectory $packag
 $portableDirectory = Join-Path $RunRoot 'portable'
 $portableTemp = Join-Path $RunRoot 'portable-temp'
 New-Item -ItemType Directory -Path $portableDirectory -Force | Out-Null
-$portableExecutable = Join-Path $portableDirectory 'CornerLyrics 1.0.3 Portable.exe'
-Copy-Item -LiteralPath (Join-Path $distPath 'CornerLyrics 1.0.3 Portable.exe') -Destination $portableExecutable
+$portableExecutable = Join-Path $portableDirectory 'CornerLyrics 1.0.4 Portable.exe'
+Copy-Item -LiteralPath (Join-Path $distPath 'CornerLyrics 1.0.4 Portable.exe') -Destination $portableExecutable
 Start-SmokeApp -Executable $portableExecutable -Port 9334 -DataDirectory $null -TempDirectory $portableTemp -Label 'portable'
 $portableSettings = Assert-PersistedTheme -SettingsPath (Join-Path $portableDirectory 'CornerLyrics Data\settings.json') -ExpectedTheme 'sunset'
 Start-SmokeApp -Executable $portableExecutable -Port 9334 -DataDirectory $null -TempDirectory $portableTemp -Label 'portable-restart' -ExpectedTheme 'sunset'

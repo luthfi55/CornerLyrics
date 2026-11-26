@@ -133,6 +133,13 @@ body {
   -webkit-app-region: drag;
 }
 
+.lyrics-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
 .track-header {
   display: flex;
   align-items: flex-start;
@@ -219,6 +226,40 @@ body {
   opacity: 1;
 }
 
+.lyrics-card.header-hidden {
+  min-height: 0;
+  /* The card itself stays out of the caption so nothing outside the lyric
+     body is a drag region; the lyric body carries the caption below. */
+  cursor: default;
+  -webkit-app-region: no-drag;
+}
+
+.lyrics-card.header-hidden .track-header,
+.lyrics-card.header-hidden .lyrics-footer {
+  display: none;
+}
+
+.lyrics-card.header-hidden .synced-view,
+.lyrics-card.header-hidden .plain-view {
+  min-height: 100%;
+  padding: 12px 20px;
+}
+
+.lyrics-card.header-hidden .lyrics-body {
+  flex: 1;
+  /* Hidden mode drags via a native caption region on the lyric body.
+     The restore button is a no-drag descendant of this element, which is the
+     only shape Windows honors for carving a clickable hole out of a caption
+     (sibling overlays lose to the drag region regardless of z-index). */
+  -webkit-app-region: drag;
+  cursor: default;
+}
+
+
+.header-restore[hidden] {
+  display: none;
+}
+
 .icon-button {
   display: grid;
   width: 25px;
@@ -238,6 +279,48 @@ body {
   color: var(--text);
   background: var(--button-hover);
   outline: none;
+}
+
+/* Round 2: reliably clickable unhide control. The hit box is a 42px
+   transparent square pinned to the extreme top-right corner; the compact
+   pill the user sees is painted by ::before. Chromium hit-tests native
+   clicks against app-region layers, so the box itself forces no-drag,
+   pointer-events and a z-index above every other overlay. */
+.icon-button.header-restore {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  color: var(--muted);
+  background: transparent;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+.icon-button.header-restore::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--popover-surface);
+  box-shadow: 0 4px 12px var(--card-shadow);
+}
+
+/* Round 3: the pill is a positioned ::before, which paints above
+   non-positioned content — the eye must be re-layered on top. */
+.icon-button.header-restore svg {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+  color: var(--text);
 }
 
 .close-button:hover,

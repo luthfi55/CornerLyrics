@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const DEFAULT_THEME = 'dark';
+const DEFAULT_HEADER_VISIBLE = true;
 const THEMES = Object.freeze({
   dark: 'Dark',
   light: 'Light',
@@ -16,20 +17,49 @@ function normalizeTheme(value) {
   return Object.hasOwn(THEMES, theme) ? theme : DEFAULT_THEME;
 }
 
-function loadTheme(filePath) {
+function normalizeHeaderVisible(value) {
+  return typeof value === 'boolean' ? value : DEFAULT_HEADER_VISIBLE;
+}
+
+function loadSettings(filePath) {
   try {
     const settings = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    return normalizeTheme(settings?.theme);
+    return {
+      theme: normalizeTheme(settings?.theme),
+      headerVisible: normalizeHeaderVisible(settings?.headerVisible),
+    };
   } catch {
-    return DEFAULT_THEME;
+    return { theme: DEFAULT_THEME, headerVisible: DEFAULT_HEADER_VISIBLE };
   }
 }
 
-function saveTheme(filePath, value) {
-  const theme = normalizeTheme(value);
+function saveSettings(filePath, value) {
+  const current = loadSettings(filePath);
+  const settings = {
+    theme: normalizeTheme(value?.theme ?? current.theme),
+    headerVisible: normalizeHeaderVisible(value?.headerVisible ?? current.headerVisible),
+  };
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, `${JSON.stringify({ theme }, null, 2)}\n`, 'utf8');
-  return theme;
+  fs.writeFileSync(filePath, `${JSON.stringify(settings, null, 2)}\n`, 'utf8');
+  return settings;
 }
 
-module.exports = { DEFAULT_THEME, THEMES, normalizeTheme, loadTheme, saveTheme };
+function loadTheme(filePath) {
+  return loadSettings(filePath).theme;
+}
+
+function saveTheme(filePath, value) {
+  return saveSettings(filePath, { theme: value }).theme;
+}
+
+module.exports = {
+  DEFAULT_THEME,
+  DEFAULT_HEADER_VISIBLE,
+  THEMES,
+  normalizeTheme,
+  normalizeHeaderVisible,
+  loadSettings,
+  saveSettings,
+  loadTheme,
+  saveTheme,
+};

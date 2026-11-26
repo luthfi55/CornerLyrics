@@ -12,6 +12,7 @@ function subscribe(channel, callback) {
 contextBridge.exposeInMainWorld('cornerLyrics', {
   getSnapshot: () => ipcRenderer.invoke('app:get-snapshot'),
   setTheme: (theme) => ipcRenderer.invoke('theme:set', theme),
+  setHeaderVisible: (visible) => ipcRenderer.invoke('header:set', visible),
   refreshLyrics: () => ipcRenderer.send('lyrics:refresh'),
   minimizeWindow: () => ipcRenderer.send('window:minimize'),
   closeWindow: () => ipcRenderer.send('window:close'),

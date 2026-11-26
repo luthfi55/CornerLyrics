@@ -2,6 +2,7 @@
 
 const api = window.cornerLyrics;
 const elements = {
+  lyricsCard: document.querySelector('.lyrics-card'),
   statusDot: document.getElementById('status-dot'),
   sourceName: document.getElementById('source-name'),
   trackTitle: document.getElementById('track-title'),
@@ -16,6 +17,8 @@ const elements = {
   themeButton: document.getElementById('theme-button'),
   themePicker: document.getElementById('theme-picker'),
   themeAnnouncement: document.getElementById('theme-announcement'),
+  hideHeaderButton: document.getElementById('hide-header-button'),
+  showHeaderButton: document.getElementById('show-header-button'),
   refreshButton: document.getElementById('refresh-button'),
   minimizeButton: document.getElementById('minimize-button'),
   closeButton: document.getElementById('close-button'),
@@ -92,8 +95,30 @@ const state = {
     error: '',
   },
   system: { status: 'starting', message: '' },
+  headerVisible: true,
   activeIndex: -1,
 };
+
+function applyHeaderVisibility(visible) {
+  state.headerVisible = visible !== false;
+  elements.lyricsCard.classList.toggle('header-hidden', !state.headerVisible);
+  elements.showHeaderButton.hidden = state.headerVisible;
+  elements.hideHeaderButton.setAttribute('aria-pressed', String(!state.headerVisible));
+}
+
+async function setHeaderVisibility(visible) {
+  applyHeaderVisibility(visible);
+  closeThemePicker();
+  setText(elements.themeAnnouncement, visible ? 'Header shown' : 'Header hidden');
+  try {
+    await api.setHeaderVisible(visible);
+  } catch {
+    setText(elements.themeAnnouncement, visible ? 'Header shown, but could not be saved' : 'Header hidden, but could not be saved');
+  }
+}
+
+const requestedHeaderVisible = new URLSearchParams(window.location.search).get('headerVisible');
+applyHeaderVisibility(requestedHeaderVisible !== 'false');
 
 function sourceLabel(source) {
   const names = {
@@ -278,6 +303,12 @@ api.onSystemUpdate((system) => {
 });
 
 elements.themeButton.addEventListener('click', toggleThemePicker);
+elements.hideHeaderButton.addEventListener('click', () => setHeaderVisibility(false));
+elements.showHeaderButton.addEventListener('click', () => setHeaderVisibility(true));
+
+// Hidden-mode dragging is native: the lyric views carry
+// `-webkit-app-region: drag` (see styles.css), so Windows moves the window
+// itself and the restore button outside those regions stays clickable.
 for (const button of themeButtons) {
   button.addEventListener('click', () => chooseTheme(button.dataset.themeChoice));
 }
@@ -309,6 +340,7 @@ api.getSnapshot().then((snapshot) => {
   state.lyrics = snapshot.lyrics;
   state.system = snapshot.system;
   applyTheme(Object.hasOwn(THEME_NAMES, snapshot.theme || '') ? snapshot.theme : activeTheme);
+  applyHeaderVisibility(snapshot.headerVisible !== false);
   renderMedia();
   renderSystem();
   renderLyrics();

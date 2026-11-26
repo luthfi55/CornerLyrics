@@ -7,7 +7,14 @@ const { spawn } = require('node:child_process');
 const readline = require('node:readline');
 const { fetchLyrics } = require('./lib/lyrics.cjs');
 const { parseLrc } = require('./lib/lrc.cjs');
-const { DEFAULT_THEME, normalizeTheme, loadTheme, saveTheme } = require('./lib/themes.cjs');
+const {
+  DEFAULT_THEME,
+  DEFAULT_HEADER_VISIBLE,
+  normalizeTheme,
+  normalizeHeaderVisible,
+  loadSettings,
+  saveSettings,
+} = require('./lib/themes.cjs');
 
 const APP_NAME = 'CornerLyrics';
 app.setName(APP_NAME);
@@ -19,7 +26,9 @@ const isWindows = process.platform === 'win32';
 const WINDOW_STATE_FILE = () => path.join(app.getPath('userData'), 'window-state.json');
 const SETTINGS_FILE = () => path.join(app.getPath('userData'), 'settings.json');
 const MIN_WINDOW_WIDTH = 320;
-const MIN_WINDOW_HEIGHT = 140;
+const MIN_WINDOW_HEIGHT = 90;
+const COMPACT_WINDOW_HEIGHT = 96;
+const EXPANDED_WINDOW_HEIGHT = 164;
 
 function runtimePath(filePath) {
   const packedDirectory = `app.asar${path.sep}`;
@@ -37,6 +46,8 @@ let latestMedia = emptyMedia();
 let latestLyrics = idleLyrics();
 let systemState = { status: 'starting', message: '' };
 let selectedTheme = DEFAULT_THEME;
+let headerVisible = DEFAULT_HEADER_VISIBLE;
+let headerExpandedHeight = EXPANDED_WINDOW_HEIGHT;
 let currentMediaKey = '';
 let lyricsRequestId = 0;
 let activeLyricsController = null;
@@ -179,6 +190,12 @@ async function createWindow() {
     },
   });
 
+  if (headerVisible) {
+    headerExpandedHeight = bounds.height;
+  } else {
+    mainWindow.setSize(bounds.width, COMPACT_WINDOW_HEIGHT);
+  }
+
   mainWindow.setAlwaysOnTop(true, 'floating');
   mainWindow.setOpacity(0.97);
   mainWindow.on('move', scheduleWindowSave);
@@ -189,7 +206,7 @@ async function createWindow() {
 
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'), {
-    query: { theme: selectedTheme },
+    query: { theme: selectedTheme, headerVisible: String(headerVisible) },
   });
   mainWindow.showInactive();
   send('media:update', latestMedia);
@@ -363,12 +380,29 @@ function registerIpc() {
     lyrics: latestLyrics,
     system: systemState,
     theme: selectedTheme,
+    headerVisible,
   }));
 
   ipcMain.handle('theme:set', (_event, value) => {
     selectedTheme = normalizeTheme(value);
-    saveTheme(SETTINGS_FILE(), selectedTheme);
+    saveSettings(SETTINGS_FILE(), { theme: selectedTheme });
     return selectedTheme;
+  });
+
+  ipcMain.handle('header:set', (_event, value) => {
+    const visible = normalizeHeaderVisible(value);
+    if (visible === headerVisible) return headerVisible;
+
+    if (!visible && mainWindow && !mainWindow.isDestroyed()) {
+      headerExpandedHeight = mainWindow.getSize()[1];
+      mainWindow.setSize(mainWindow.getSize()[0], COMPACT_WINDOW_HEIGHT);
+    } else if (visible && mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setSize(mainWindow.getSize()[0], Math.max(EXPANDED_WINDOW_HEIGHT, headerExpandedHeight));
+    }
+
+    headerVisible = visible;
+    saveSettings(SETTINGS_FILE(), { headerVisible });
+    return headerVisible;
   });
 
   ipcMain.on('lyrics:refresh', () => loadLyrics({ force: true }));
@@ -390,7 +424,9 @@ if (!gotSingleInstanceLock) {
     if (isWindows) app.setAppUserModelId('id.pojoklirik.desktop');
     registerIpc();
     await migrateLegacyWindowState();
-    selectedTheme = loadTheme(SETTINGS_FILE());
+    const settings = loadSettings(SETTINGS_FILE());
+    selectedTheme = settings.theme;
+    headerVisible = settings.headerVisible;
     await createWindow();
     startMediaMonitor();
   });

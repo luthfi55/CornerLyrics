@@ -1,6 +1,6 @@
 {
   "name": "corner-lyrics",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A tiny always-on-top lyrics widget for Windows.",
   "main": "src/main.cjs",
   "author": "CornerLyrics",

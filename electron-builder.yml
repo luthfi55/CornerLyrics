@@ -29,4 +29,4 @@ nsis:
 portable:
   artifactName: ${productName} ${version} Portable.${ext}
   requestExecutionLevel: user
-  unpackDirName: cornerlyrics-portable
+  unpackDirName: cornerlyrics-portable-${version}

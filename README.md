@@ -2,7 +2,7 @@
 
 A small, always-on-top lyrics widget for Windows. CornerLyrics reads the song currently playing through the Windows Media Session, finds matching lyrics on LRCLIB, and keeps the current line in sync with playback—without switching away from your work.
 
-![CornerLyrics 1.0.3 running as a small always-on-top overlay on Windows 11, showing synchronized lyrics for “Apocalypse” by Cigarettes After Sex](docs/assets/desktop-preview.png)
+![CornerLyrics running as a small always-on-top overlay on Windows 11, showing synchronized lyrics for “Apocalypse” by Cigarettes After Sex](docs/assets/desktop-preview.png)
 
 ## Features
 
@@ -12,8 +12,10 @@ A small, always-on-top lyrics widget for Windows. CornerLyrics reads the song cu
 - **Smart LRCLIB matching** using track title, artist, album, and duration, with search fallback.
 - **Plain-lyrics and instrumental fallbacks** when synchronized lyrics are unavailable.
 - **Four built-in themes** — Dark, Light, Ocean, and Sunset — with instant switching and saved preferences.
+- **Compact lyrics-only mode** with persistent header visibility and an always-available Show-header button.
+- **Native Windows dragging** from the lyrics body with the default arrow cursor and no renderer IPC movement.
 - **Draggable and resizable** window with its position saved between sessions.
-- **Minimal controls** to choose a theme, refresh lyrics, minimize, or close the widget.
+- **Minimal controls** to choose a theme, hide the header, refresh lyrics, minimize, or close the widget.
 - **Portable and installer builds** for 64-bit Windows.
 - **Privacy-conscious architecture:** no account, no media library scan, and no audio or local lyrics files uploaded.
 
@@ -33,22 +35,30 @@ Dark is the default. Your selection is saved in `settings.json` and restored aft
 | --- | --- |
 | ![CornerLyrics Ocean theme](docs/assets/theme-ocean.png) | ![CornerLyrics Sunset theme](docs/assets/theme-sunset.png) |
 
+## Compact lyrics-only mode
+
+Click **Hide header** in the overlay controls to hide the song title, artist, media source, status footer, and window buttons. The card shrinks to a lyrics-only overlay.
+
+- The eye-shaped **Show header** button stays visible in the top-right corner. Its clickable area is larger than the visible pill and is excluded from the native drag region, so it always receives clicks.
+- Drag the lyrics body to move the overlay. Windows handles the movement directly as a native window caption, using the default arrow cursor; the renderer does not send movement IPC.
+- Header visibility is saved in `settings.json` and restored after restart.
+
 ## Download
 
-Download **CornerLyrics 1.0.3** from the [GitHub Releases page](https://github.com/luthfi55/CornerLyrics/releases/tag/v1.0.3).
+Download **CornerLyrics 1.0.4** from the [GitHub Releases page](https://github.com/luthfi55/CornerLyrics/releases/tag/v1.0.4).
 
 | Build | Download | Notes |
 | --- | --- | --- |
-| Portable | [CornerLyrics.1.0.3.Portable.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.3/CornerLyrics.1.0.3.Portable.exe) | About 105 MB. No installation required; settings are stored beside the executable. |
-| Installer | [CornerLyrics.Setup.1.0.3.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.3/CornerLyrics.Setup.1.0.3.exe) | Installs CornerLyrics and creates desktop and Start menu shortcuts. |
-| Checksums | [SHA256SUMS.txt](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.3/SHA256SUMS.txt) | SHA-256 hashes for both executables. |
+| Portable | [CornerLyrics.1.0.4.Portable.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.4/CornerLyrics.1.0.4.Portable.exe) | About 105 MB. No installation required; settings are stored beside the executable. |
+| Installer | [CornerLyrics.Setup.1.0.4.exe](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.4/CornerLyrics.Setup.1.0.4.exe) | Installs CornerLyrics and creates desktop and Start menu shortcuts. |
+| Checksums | [SHA256SUMS.txt](https://github.com/luthfi55/CornerLyrics/releases/download/v1.0.4/SHA256SUMS.txt) | SHA-256 hashes for both executables. |
 
 The executables are distributed through GitHub Releases rather than committed to Git. These builds are not code-signed, so Windows SmartScreen may show a warning on first launch. Verify the checksums if you want to confirm that a download matches the published file.
 
 To verify the portable download in PowerShell:
 
 ```powershell
-Get-FileHash ".\CornerLyrics.1.0.3.Portable.exe" -Algorithm SHA256
+Get-FileHash ".\CornerLyrics.1.0.4.Portable.exe" -Algorithm SHA256
 ```
 
 Compare the result with the corresponding line in `SHA256SUMS.txt`.
@@ -58,10 +68,10 @@ Compare the result with the corresponding line in `SHA256SUMS.txt`.
 1. Start a song in an app or browser tab that publishes Windows Media Session metadata, such as Spotify, VLC, foobar2000, Chrome, or Microsoft Edge.
 2. Launch **CornerLyrics**. The widget opens in the lower-right corner and begins reading the active media session.
 3. Wait briefly while LRCLIB is queried. Synced lyrics appear automatically when a match is available.
-4. Drag the card to reposition it. Resize it from its edges, and hover over the upper-right corner for the theme, refresh, minimize, and close buttons.
+4. Drag the card to reposition it. Resize it from its edges, and hover over the upper-right corner for the theme, refresh, minimize, and close buttons. Use **Hide header** for a lyrics-only overlay; the eye button restores the header.
 5. Use **Refresh lyrics** if a track has no match or if you want to retry after a network error.
 
-The portable build keeps its local data in a `CornerLyrics Data` folder next to the executable, including window state and the selected theme. The installed build uses the standard per-user application data location.
+The portable build keeps its local data in a `CornerLyrics Data` folder next to the executable, including window state, the selected theme, and header visibility. The installed build uses the standard per-user application data location.
 
 ## How synchronization works
 
@@ -101,8 +111,8 @@ npm run build:portable
 
 The generated files are written to `dist/`:
 
-- `CornerLyrics Setup 1.0.3.exe`
-- `CornerLyrics 1.0.3 Portable.exe`
+- `CornerLyrics Setup 1.0.4.exe`
+- `CornerLyrics 1.0.4 Portable.exe`
 
 Run the dependency-free test suite and syntax checks with:
 

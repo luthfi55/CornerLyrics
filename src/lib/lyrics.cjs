@@ -1,7 +1,7 @@
 'use strict';
 
 const API_ROOT = 'https://lrclib.net/api';
-const USER_AGENT = 'CornerLyrics/1.0.3';
+const USER_AGENT = 'CornerLyrics/1.0.4';
 
 function normalizeForMatch(value) {
   return String(value || '')
